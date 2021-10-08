@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Math">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{ddb17eba-e15e-4597-8bf6-064b16b159d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Helpers">
+      <UniqueIdentifier>{72056cb6-72a2-42b7-b05e-376f1ddd957e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenegraph">
+      <UniqueIdentifier>{9d25ff22-ba40-4d43-9ad6-f20148adbcee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shapes">
+      <UniqueIdentifier>{b243bde8-584a-46cb-a1e5-d569ce42849a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{314592c7-385e-4e4e-9451-aeed09f49691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ray">
+      <UniqueIdentifier>{5ec26adf-8f1d-49bb-bf90-2a1008297c4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Light&amp;Material">
+      <UniqueIdentifier>{1a278866-ddd7-4a91-990d-f8610c53318f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Managers">
+      <UniqueIdentifier>{4a8255ba-fe60-4d76-a091-c2c4040e2a12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BRDF">
+      <UniqueIdentifier>{0f0cc601-30a6-4287-8aba-e8a232dd0bde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mesh">
+      <UniqueIdentifier>{3e6b9777-5887-4e8a-b98c-421bc79a4b7a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RayTracer.props" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EMath.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EMathUtilities.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EMatrix.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EMatrix2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EMatrix3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EMatrix4.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EPoint.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EPoint2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EPoint3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EPoint4.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EVector.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EVector2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EVector3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EVector4.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="ERenderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="ERGBColor.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="ETimer.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenegraph.h">
+      <Filter>Scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape.h">
+      <Filter>Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
+      <Filter>Ray</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Light&amp;Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Light&amp;Material</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="LightManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="BRDF.h">
+      <Filter>BRDF</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangleMesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ERenderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ETimer.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenegraph.cpp">
+      <Filter>Scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape.cpp">
+      <Filter>Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Ray.cpp">
+      <Filter>Ray</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Light&amp;Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Light&amp;Material</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="LightManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="BRDF.cpp">
+      <Filter>BRDF</Filter>
+    </ClCompile>
+    <ClCompile Include="Triangle.cpp">
+      <Filter>Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="TriangleMesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
