@@ -11,7 +11,6 @@ Elite::RGBColor BRDF::Phong(float specularReflectance, float phongExponent, cons
 	float cosAlpha = Elite::Dot(reflectV, v);
 	float phong = (specularReflectance * pow(cosAlpha, phongExponent));
 	return Elite::RGBColor(phong, phong, phong);
-	//test for github
 }
 
 Elite::RGBColor BRDF::CookTorrance(const Elite::RGBColor& F, const Elite::FVector3& l, const Elite::FVector3& v, const Elite::FVector3& normal, float roughness)

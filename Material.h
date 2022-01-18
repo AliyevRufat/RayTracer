@@ -2,6 +2,7 @@
 #include "ERGBColor.h"
 #include "EMath.h"
 #include "Shape.h"
+#include <vector>
 
 class Material
 {
@@ -13,9 +14,17 @@ public:
 	Material& operator=(const Material&) = delete;
 	Material& operator=(Material&&) noexcept = delete;
 	virtual Elite::RGBColor Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v) const = 0;
-protected:
+	virtual void SetAllShapes(std::vector<Shape*> pAllShapes) {};
+	virtual void SetCurrShape(Shape* pShape) {};
+	bool CastRay(const Ray& castRay, std::vector<Shape*> objectList,
+		Shape* thisObject,
+		Shape* closestObject,
+		HitRecord& hitRecord) const;
+
 	Elite::RGBColor m_DiffuseColor{ 0,0,0 };
 	float m_DiffuseReflectance{ 0 };
+	Shape* m_pShape;
+	std::vector<Shape*> m_pAllShapes;
 };
 
 class Material_Lambert final : public Material
@@ -63,4 +72,19 @@ private:
 	bool m_IsMetal;
 	Elite::RGBColor m_F0;
 	float m_Roughness;
+};
+
+class Material_Refractive final : public Material
+{
+public:
+	Material_Refractive(const Elite::RGBColor& diffuseColor);
+	void SetAllShapes(std::vector<Shape*> pAllShapes) override { m_pAllShapes = pAllShapes; };
+	void SetCurrShape(Shape* pShape) override { m_pShape = pShape; };
+	~Material_Refractive() = default;
+	Material_Refractive(const Material_Refractive&) = delete;
+	Material_Refractive(Material_Refractive&&) noexcept = delete;
+	Material_Refractive& operator=(const Material_Refractive&) = delete;
+	Material_Refractive& operator=(Material_Refractive&&) noexcept = delete;
+	Elite::RGBColor Shade(const HitRecord & hitRecord, const Elite::FVector3 & l, const Elite::FVector3 & v) const override;
+
 };

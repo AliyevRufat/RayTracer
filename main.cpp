@@ -71,18 +71,18 @@ int main(int argc, char* args[])
 	bool isLooping = true;
 	bool takeScreenshot = false;
 	//-------------------------------------------Switch this bool to change the scene from normal to bunny-----------------------------------------------------
-	bool renderBunny = true;
+	bool renderBunny = false;
 
-	Material* triangleMeshMat = new Material_Lambert(0.9f, Elite::RGBColor(1.0f, 1.f, 0.8f));
-	TriangleMesh* triangleMesh = new TriangleMesh("lowpoly_bunny.obj", triangleMeshMat);
-	Material* triangleMat = new Material_Lambert(0.9f, Elite::RGBColor(1.0f, 1.f, 0.8f));
+	//Material* triangleMeshMat = new Material_Lambert(0.9f, Elite::RGBColor(1.0f, 1.f, 0.8f));
+	//TriangleMesh* triangleMesh = new TriangleMesh("lowpoly_bunny.obj", triangleMeshMat);
+	//Material* triangleMat = new Material_Lambert(0.9f, Elite::RGBColor(1.0f, 1.f, 0.8f));
 
-	if (renderBunny)
-	{
-		//---------Initialize Triangle Mesh-------
-		triangleMesh->ReadObjFile();
-		Scenegraph::GetInstance()->AddObjectToGraph(triangleMesh);
-	}
+	//if (renderBunny)
+	//{
+	//	//---------Initialize Triangle Mesh-------
+	//	triangleMesh->ReadObjFile();
+	//	Scenegraph::GetInstance()->AddObjectToGraph(triangleMesh);
+	//}
 	//---------Initialize all the Shapes-------
 	//planes
 	Material* matPlane = new Material_Lambert(0.9f, Elite::RGBColor(1.f, 0.85f, 0.75f));
@@ -92,22 +92,30 @@ int main(int argc, char* args[])
 	Scenegraph::GetInstance()->AddObjectToGraph(new Plane(Elite::FPoint3(5.f, 0.f, 0.f), Elite::FVector3(-1.f, 0.f, 0.f), matPlane));
 	if (!renderBunny)
 	{
+		std::vector<Shape*> allShapes;
 		//////////spheres
-		Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(-2.5f, 4.0f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 1.0f))));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(0.0f, 4.0f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 0.4f))));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(2.5f, 4.0f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 0.1f))));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(-2.5f, 1.5f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 1.0f))));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(0.0f, 1.5f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.7f))));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(2.5f, 1.5f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.1f))));
-		//triangles
-		Scenegraph::GetInstance()->AddObjectToGraph(new Triangle(Elite::FPoint3(-0.75f, 7.5f, 0.0f), Elite::FPoint3(-0.75f, 6.0f, 0.0f), Elite::FPoint3(0.75f, 6.0f, 0.0f), triangleMat, Triangle::Cullmode::backCulling));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Triangle(Elite::FPoint3(1.75f, 7.5f, 0.0f), Elite::FPoint3(1.75f, 6.0f, 0.0f), Elite::FPoint3(3.25f, 6.0f, 0.0f), triangleMat, Triangle::Cullmode::frontCulling));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Triangle(Elite::FPoint3(-3.25f, 7.5f, 0.0f), Elite::FPoint3(-3.25f, 6.0f, 0.0f), Elite::FPoint3(-1.75f, 6.0f, 0.0f), triangleMat, Triangle::Cullmode::noCulling));
+		//Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(-2.5f, 4.0f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 1.0f))));
+		//Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(0.0f, 4.0f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 0.4f))));
+		//Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(2.5f, 4.0f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 0.1f))));
+		auto materialRefractive = materialManager.AddMaterial(new Material_Refractive(Elite::RGBColor(1.0f,0.5f,0.5f)));
+		auto sphere = new Sphere(Elite::FPoint3(-2.5f, 1.5f, 0.0f), 1.0f, materialRefractive);
+		materialRefractive->SetCurrShape(sphere);
+		allShapes.push_back(sphere);
+		Scenegraph::GetInstance()->AddObjectToGraph(sphere);
+		sphere = new Sphere(Elite::FPoint3(-2.5f, 1.5f, -3.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.7f)));
+		allShapes.push_back(sphere);
+		Scenegraph::GetInstance()->AddObjectToGraph(sphere);
+		//Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(2.5f, 1.5f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.1f))));
+		////triangles
+		//Scenegraph::GetInstance()->AddObjectToGraph(new Triangle(Elite::FPoint3(-0.75f, 7.5f, 0.0f), Elite::FPoint3(-0.75f, 6.0f, 0.0f), Elite::FPoint3(0.75f, 6.0f, 0.0f), triangleMat, Triangle::Cullmode::backCulling));
+		//Scenegraph::GetInstance()->AddObjectToGraph(new Triangle(Elite::FPoint3(1.75f, 7.5f, 0.0f), Elite::FPoint3(1.75f, 6.0f, 0.0f), Elite::FPoint3(3.25f, 6.0f, 0.0f), triangleMat, Triangle::Cullmode::frontCulling));
+		//Scenegraph::GetInstance()->AddObjectToGraph(new Triangle(Elite::FPoint3(-3.25f, 7.5f, 0.0f), Elite::FPoint3(-3.25f, 6.0f, 0.0f), Elite::FPoint3(-1.75f, 6.0f, 0.0f), triangleMat, Triangle::Cullmode::noCulling));
+		materialRefractive->SetAllShapes(allShapes);
 	}
 
 	//---------Initialize all the Lights-------
 	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0,5.0f,-4.0f }, Elite::RGBColor{ 1.f,1.f,1.f }, 20.0f, Light::LightType::pointLight));
-	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0,2.5f,4.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 20.0f, Light::LightType::pointLight));
+	//LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0,2.5f,4.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 20.0f, Light::LightType::pointLight));
 	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ -4,10,6.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 1.5f, Light::LightType::directionalLight));
 	//-----------------------------------------
 	while (isLooping)
@@ -265,11 +273,11 @@ int main(int argc, char* args[])
 	delete pRenderer;
 	delete pTimer;
 	delete matPlane;
-	delete triangleMat;
-	delete triangleMeshMat;
+	//delete triangleMat;
+	//delete triangleMeshMat;
 	Scenegraph::GetInstance()->ResetInstance();
 	LightManager::GetInstance()->ResetInstance();
-	delete triangleMesh;
+	//delete triangleMesh;
 
 	ShutDown(pWindow);
 	return 0;

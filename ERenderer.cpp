@@ -34,10 +34,9 @@ void Elite::Renderer::Render(Camera& camera)
 	{
 		for (uint32_t c = 0; c < m_Width; ++c)
 		{
-			FPoint3 sample = Elite::FPoint3(lookAtMatrix * m_Ray.ScreenToWorld(r, c, camera.GetFOV()));
+			FPoint3 sample = Elite::FPoint3(lookAtMatrix * m_Ray.ScreenToWorld(r,c,camera.GetFOV()));
 			m_Ray.SetDirection(Elite::GetNormalized(sample - camera.GetPosition()));
 			m_Ray.SetOrigin(camera.GetPosition());
-
 			HitRecord hitRecord;
 			HitObjects(m_Ray, hitRecord);
 
@@ -78,32 +77,11 @@ void Elite::Renderer::Render(Camera& camera)
 						float dotProduct = Dot(hitRecord.normal, direction);
 						if (dotProduct >= 0)
 						{
-							//if the lights are switched on
-							if (pLight == LightManager::GetInstance()->GetLights()[0] && m_PointLight1Switch || pLight == LightManager::GetInstance()->GetLights()[1] && m_PointLight2Switch || pLight == LightManager::GetInstance()->GetLights()[2] && m_DirLightSwitch)
-							{
-								Ergb = pLight->GetIrradiance(hitRecord);
-							}
-							else
-							{
-								Ergb = Elite::RGBColor(0, 0, 0);
-							}
+							//light contribution
+							Ergb = pLight->GetIrradiance(hitRecord);
 							// calculate v for shade
 							Elite::FVector3 v = Elite::GetNormalized(Elite::FVector3(camera.GetPosition() - Elite::FVector3(hitPointWithOffset)));
-
-							//the 3 different scenarios of pressing T
-							if (m_BRDFSwitch && m_IrradianceSwitch)
-							{
-								finalColor += Ergb * hitRecord.pMaterial->Shade(hitRecord, direction, v) * dotProduct;
-							}
-							else if (m_BRDFSwitch && !m_IrradianceSwitch)
-							{
-								m_ShadowsSwitch = false;
-								finalColor += hitRecord.pMaterial->Shade(hitRecord, direction, v) * dotProduct;
-							}
-							else if (!m_BRDFSwitch && m_IrradianceSwitch)
-							{
-								finalColor += Ergb * dotProduct;
-							}
+							finalColor += Ergb * hitRecord.pMaterial->Shade(hitRecord, direction, v) *dotProduct;
 							finalColor.MaxToOne();
 						}
 					}
