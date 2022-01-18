@@ -10,6 +10,8 @@
 #include "LightManager.h"
 #include <iostream>
 
+Camera* Elite::Renderer::m_Camera{ };
+
 Elite::Renderer::Renderer(SDL_Window* pWindow)
 {
 	//Initialize
@@ -27,6 +29,8 @@ Elite::Renderer::Renderer(SDL_Window* pWindow)
 void Elite::Renderer::Render(Camera& camera)
 {
 	SDL_LockSurface(m_pBackBuffer);
+	//
+	m_Camera = &camera;
 	//
 	Elite::FMatrix4 lookAtMatrix = camera.GetLookAtMatrix();
 	//Loop over all the pixels
@@ -81,8 +85,18 @@ void Elite::Renderer::Render(Camera& camera)
 							Ergb = pLight->GetIrradiance(hitRecord);
 							// calculate v for shade
 							Elite::FVector3 v = Elite::GetNormalized(Elite::FVector3(camera.GetPosition() - Elite::FVector3(hitPointWithOffset)));
-							finalColor += Ergb * hitRecord.pMaterial->Shade(hitRecord, direction, v) *dotProduct;
-							finalColor.MaxToOne();
+							//
+							bool isShade = false;
+							auto shade = hitRecord.pMaterial->Shade(hitRecord, direction, v, isShade);
+							if (isShade)
+							{
+								finalColor = shade;
+							}
+							else 
+							{
+								finalColor += Ergb * shade * dotProduct;
+								finalColor.MaxToOne();
+							}
 						}
 					}
 				}
@@ -121,6 +135,7 @@ void Elite::Renderer::HitObjects(const Ray& ray, HitRecord& hitRecord) const
 		}
 	}
 }
+
 void Elite::Renderer::SetSwitchBools(bool dirLight, bool pointLight1, bool pointLight2, bool irrad, bool shadows, bool BRDF)
 {
 	m_DirLightSwitch = dirLight;

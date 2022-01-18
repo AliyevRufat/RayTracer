@@ -49,8 +49,9 @@ bool Sphere::TestIntersection(const Ray& ray, HitRecord& hitRecord) const
 	//float b = 2 * Dot((ray.GetOrigin() - m_Origin), ray.GetDirection());
 	//float c = Dot((ray.GetOrigin() - m_Origin), (ray.GetOrigin() - m_Origin)) - 1.0;
 
-	auto dir = ray.GetP2() - ray.GetOrigin();
+	auto dir = ray.GetOrigin()- ray.GetP2() ;
 	dir = Elite::GetNormalized(dir);
+	//probeer ook me upper calculation om te zien of het zelfde resultaat heeft
 	float a = 1;
 	float b = 2 * Dot(ray.GetOrigin() - m_Origin, dir);
 	float c = Dot(ray.GetOrigin() - m_Origin, ray.GetOrigin() - m_Origin) - 1;
@@ -74,7 +75,6 @@ bool Sphere::TestIntersection(const Ray& ray, HitRecord& hitRecord) const
 			return false;
 		}
 
-		if (t1 < t2)
 		{
 			if (hitRecord.tValue < ray.GetTMin())
 			{

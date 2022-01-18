@@ -1,6 +1,10 @@
 #include "Material.h"
 #include "BRDF.h"
 #include "Camera.h"
+#include "Scenegraph.h"
+#include "Light.h"
+#include "LightManager.h"
+#include "ERenderer.h"
 
 Material_Lambert::Material_Lambert(float diffuseReflectance, const  Elite::RGBColor& diffuseColor)
 {
@@ -8,7 +12,7 @@ Material_Lambert::Material_Lambert(float diffuseReflectance, const  Elite::RGBCo
 	m_DiffuseReflectance = { diffuseReflectance };
 }
 
-Elite::RGBColor Material_Lambert::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v) const
+Elite::RGBColor Material_Lambert::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const
 {
 	return BRDF::Lambert(m_DiffuseReflectance, m_DiffuseColor);
 }
@@ -21,7 +25,7 @@ Material_LambertPhong::Material_LambertPhong(float diffuseReflectance, const Eli
 	m_DiffuseReflectance = diffuseReflectance;
 }
 
-Elite::RGBColor Material_LambertPhong::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v) const
+Elite::RGBColor Material_LambertPhong::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const
 {
 	return BRDF::Lambert(m_DiffuseReflectance, m_DiffuseColor) +
 		BRDF::Phong(m_SpecularReflectance, m_PhongExponent, l, v, hitRecord.normal);
@@ -37,7 +41,7 @@ Material_CookTorrance::Material_CookTorrance(float diffuseReflectance, const Eli
 	m_DiffuseReflectance = diffuseReflectance;
 }
 
-Elite::RGBColor Material_CookTorrance::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v) const
+Elite::RGBColor Material_CookTorrance::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const
 {
 	Elite::FVector3 halfVector = (v + l) / (Elite::Magnitude(v + l));
 	Elite::RGBColor F = m_F0 + (Elite::RGBColor(1, 1, 1) - m_F0) * (pow(1 - (Elite::Dot(halfVector, v)), 5));
@@ -52,10 +56,10 @@ Material_Refractive::Material_Refractive(const Elite::RGBColor& diffuseColor)
 	m_DiffuseColor = diffuseColor;
 }
 
-Elite::RGBColor Material_Refractive::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v) const
+Elite::RGBColor Material_Refractive::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const
 {
 	Elite::RGBColor trnColor = {0,0,0};
-	double indexOfRef = 1.0;
+	double indexOfRef = 1;
 	//
 	Elite::FVector3 p = l;
 	p = Elite::GetNormalized(p);
@@ -120,7 +124,49 @@ Elite::RGBColor Material_Refractive::Shade(const HitRecord& hitRecord, const Eli
 		if (closestObject->GetMaterial())
 		{
 			//matColor = closestObject->m_pMaterial->ComputeColor(objectList, lightList, closestObject, closestIntPoint, closestLocalNormal, finalRay);
-			matColor = closestObject->GetMaterial()->m_DiffuseColor;
+			 
+			//for (const Light* pLight : LightManager::GetInstance()->GetLights())
+			for (size_t i = 0; i < LightManager::GetInstance()->GetLights().size(); i++)
+			{
+				auto pLight = LightManager::GetInstance()->GetLights()[i];
+				//getting the Hitpoint direction and its length
+				Elite::FPoint3 hitPointWithOffset = closestHitRecord.hitPoint + (closestHitRecord.normal * 0.001f);
+				Elite::FVector3 direction = pLight->GetDirection(hitPointWithOffset);
+				float lengthDirection = Normalize(direction);
+
+				bool isPointVisible = true;
+				//checking for shadows
+				HitRecord tempHitRecord{};
+				tempHitRecord.isLightRay = true;
+				Ray lightRay;
+				lightRay.SetTMin(0.001f);
+				lightRay.SetTMax(lengthDirection);
+				lightRay.SetOrigin(hitPointWithOffset);
+				lightRay.SetDirection(direction);
+
+				for (Shape* pShape : Scenegraph::GetInstance()->GetShapes())
+				{
+					if (pShape->Hit(lightRay, tempHitRecord))
+					{
+						isPointVisible = false;
+					}
+				}
+				Elite::RGBColor Ergb;
+				if (isPointVisible)
+				{
+					float dotProduct = Dot(closestHitRecord.normal, direction);
+					if (dotProduct >= 0)
+					{
+						//light contribution
+						Ergb = pLight->GetIrradiance(closestHitRecord);
+						// calculate v for shade
+						Elite::FVector3 v = Elite::GetNormalized(Elite::FVector3(Elite::Renderer::m_Camera->GetPosition() - Elite::FVector3(hitPointWithOffset)));
+						bool temp = false;
+						matColor += Ergb * closestHitRecord.pMaterial->Shade(closestHitRecord, direction, v, temp) * dotProduct;
+						matColor.MaxToOne();
+					}
+				}
+			}
 		}
 		else
 		{
@@ -129,34 +175,58 @@ Elite::RGBColor Material_Refractive::Shade(const HitRecord& hitRecord, const Eli
 
 		}
 	}
-
+	isShade = true;
 	trnColor = matColor;
 	return trnColor;
 }
 
-bool Material::CastRay(const Ray& castRay, std::vector<Shape*> objectList, Shape* thisObject, Shape* closestObject, HitRecord& hitRecord) const
+bool Material::CastRay(const Ray& castRay, std::vector<Shape*> objectList, Shape* thisObject, Shape*&closestObject, HitRecord& hitRecord) const
 {
-	HitRecord tempHitRecord;
+	//HitRecord tempHitRecord;
+	//
+	//double minDist = 1e6;
+	//bool intersectionFound = false;
+	//for (auto currentObject : objectList)
+	//{
+	//	if (currentObject->GetMaterial()->m_DiffuseColor != thisObject->GetMaterial()->m_DiffuseColor)//TODO : change this to an actual comparison
+	//	{
+	//		bool validInt = currentObject->Hit(castRay, tempHitRecord);
+	//
+	//		if (validInt)
+	//		{
+	//			intersectionFound = true;
+	//
+	//			double dist = Elite::Magnitude(tempHitRecord.hitPoint - castRay.GetOrigin());
+	//
+	//			if (dist < minDist)
+	//			{
+	//				minDist = dist;
+	//				closestObject = currentObject;
+	//				hitRecord = tempHitRecord;
+	//			}
+	//		}
+	//	}
+	//}
+	//return intersectionFound;
 
 	double minDist = 1e6;
 	bool intersectionFound = false;
-	for (auto currentObject : objectList)
+
+	HitRecord tempHitRecord{};
+	float tempTValue = FLT_MAX;
+
+	for (Shape* shape : Scenegraph::GetInstance()->GetShapes())
 	{
-		if (currentObject->GetMaterial()->m_DiffuseColor != thisObject->GetMaterial()->m_DiffuseColor)//TODO : change this to an actual comparison
+		if (shape->Hit(castRay, tempHitRecord))
 		{
-			bool validInt = currentObject->Hit(castRay, tempHitRecord);
-
-			if (validInt)
+			if (shape != thisObject)
 			{
-				intersectionFound = true;
-
-				double dist = Elite::Magnitude(tempHitRecord.hitPoint - castRay.GetOrigin());
-
-				if (dist < minDist)
+				if (tempHitRecord.tValue < tempTValue)
 				{
-					minDist = dist;
-					closestObject = currentObject;
+					tempTValue = tempHitRecord.tValue;
 					hitRecord = tempHitRecord;
+					intersectionFound = true;
+					closestObject = shape;
 				}
 			}
 		}

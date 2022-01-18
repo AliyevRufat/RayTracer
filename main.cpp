@@ -102,7 +102,7 @@ int main(int argc, char* args[])
 		materialRefractive->SetCurrShape(sphere);
 		allShapes.push_back(sphere);
 		Scenegraph::GetInstance()->AddObjectToGraph(sphere);
-		sphere = new Sphere(Elite::FPoint3(-2.5f, 1.5f, -3.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.7f)));
+		sphere = new Sphere(Elite::FPoint3(0.0f, 1.5f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.7f)));
 		allShapes.push_back(sphere);
 		Scenegraph::GetInstance()->AddObjectToGraph(sphere);
 		//Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(2.5f, 1.5f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.1f))));
@@ -114,9 +114,9 @@ int main(int argc, char* args[])
 	}
 
 	//---------Initialize all the Lights-------
-	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0,5.0f,-4.0f }, Elite::RGBColor{ 1.f,1.f,1.f }, 20.0f, Light::LightType::pointLight));
-	//LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0,2.5f,4.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 20.0f, Light::LightType::pointLight));
-	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ -4,10,6.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 1.5f, Light::LightType::directionalLight));
+	//LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0,5.0f,-4.0f }, Elite::RGBColor{ 1.f,1.f,1.f }, 80.0f, Light::LightType::pointLight));
+	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0,2.5f,4.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 80.0f, Light::LightType::pointLight));
+	//LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ -4,10,6.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 1.5f, Light::LightType::directionalLight));
 	//-----------------------------------------
 	while (isLooping)
 	{
