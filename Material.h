@@ -13,7 +13,7 @@ public:
 	Material(Material&&) noexcept = delete;
 	Material& operator=(const Material&) = delete;
 	Material& operator=(Material&&) noexcept = delete;
-	virtual Elite::RGBColor Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const = 0;
+	virtual Elite::RGBColor Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade, const Elite::FVector3& incidentRay) const = 0;
 	virtual void SetAllShapes(std::vector<Shape*> pAllShapes) {};
 	virtual void SetCurrShape(Shape* pShape) {};
 	bool CastRay(const Ray& castRay, std::vector<Shape*> objectList,
@@ -25,6 +25,7 @@ public:
 	float m_DiffuseReflectance{ 0 };
 	Shape* m_pShape;
 	std::vector<Shape*> m_pAllShapes;
+	static double m_IndexOfRef;
 };
 
 class Material_Lambert final : public Material
@@ -37,7 +38,7 @@ public:
 	Material_Lambert(Material_Lambert&&) noexcept = delete;
 	Material_Lambert& operator=(const Material_Lambert&) = delete;
 	Material_Lambert& operator=(Material_Lambert&&) noexcept = delete;
-	Elite::RGBColor Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const override;
+	Elite::RGBColor Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade, const Elite::FVector3& incidentRay) const override;
 };
 
 class Material_LambertPhong final : public Material
@@ -50,7 +51,7 @@ public:
 	Material_LambertPhong(Material_LambertPhong&&) noexcept = delete;
 	Material_LambertPhong& operator=(const Material_LambertPhong&) = delete;
 	Material_LambertPhong& operator=(Material_LambertPhong&&) noexcept = delete;
-	Elite::RGBColor Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const override;
+	Elite::RGBColor Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade, const Elite::FVector3& incidentRay) const override;
 private:
 	float m_SpecularReflectance;
 	float m_PhongExponent;
@@ -66,7 +67,7 @@ public:
 	Material_CookTorrance(Material_CookTorrance&&) noexcept = delete;
 	Material_CookTorrance& operator=(const Material_CookTorrance&) = delete;
 	Material_CookTorrance& operator=(Material_CookTorrance&&) noexcept = delete;
-	Elite::RGBColor Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const override;
+	Elite::RGBColor Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade, const Elite::FVector3& incidentRay) const override;
 private:
 
 	bool m_IsMetal;
@@ -85,6 +86,6 @@ public:
 	Material_Refractive(Material_Refractive&&) noexcept = delete;
 	Material_Refractive& operator=(const Material_Refractive&) = delete;
 	Material_Refractive& operator=(Material_Refractive&&) noexcept = delete;
-	Elite::RGBColor Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const override;
+	Elite::RGBColor Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade, const Elite::FVector3& incidentRay) const override;
 
 };

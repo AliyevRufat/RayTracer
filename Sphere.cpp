@@ -49,15 +49,12 @@ bool Sphere::TestIntersection(const Ray& ray, HitRecord& hitRecord) const
 	//float b = 2 * Dot((ray.GetOrigin() - m_Origin), ray.GetDirection());
 	//float c = Dot((ray.GetOrigin() - m_Origin), (ray.GetOrigin() - m_Origin)) - 1.0;
 
-	auto dir = ray.GetOrigin()- ray.GetP2() ;
+	auto dir = ray.GetOrigin() - ray.GetP2();
 	dir = Elite::GetNormalized(dir);
 	//probeer ook me upper calculation om te zien of het zelfde resultaat heeft
 	float a = 1;
 	float b = 2 * Dot(ray.GetOrigin() - m_Origin, dir);
 	float c = Dot(ray.GetOrigin() - m_Origin, ray.GetOrigin() - m_Origin) - 1;
-	//float b = 2 * Dot(Elite::FVector3(ray.GetOrigin()), Elite::GetNormalized(ray.GetDirection()));
-	//float c = Dot(Elite::FVector3(ray.GetOrigin()), Elite::FVector3(ray.GetOrigin())) - 1.0;
-
 
 	discriminant = b * b - 4 * a * c;
 	//hitRecord.color = m_Color;
@@ -74,7 +71,10 @@ bool Sphere::TestIntersection(const Ray& ray, HitRecord& hitRecord) const
 		{
 			return false;
 		}
-
+		//float squaredDiscriminant = sqrt(discriminant);
+		//
+		//hitRecord.tValue = (-b - squaredDiscriminant) / (2 * a);
+		//if (hitRecord.tValue > ray.GetTMin() && hitRecord.tValue < ray.GetTMax())
 		{
 			if (hitRecord.tValue < ray.GetTMin())
 			{

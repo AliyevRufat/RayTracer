@@ -85,10 +85,13 @@ int main(int argc, char* args[])
 	//}
 	//---------Initialize all the Shapes-------
 	//planes
-	Material* matPlane = new Material_Lambert(0.9f, Elite::RGBColor(1.f, 0.85f, 0.75f));
+	Material* matPlane = new Material_Lambert(0.9f, Elite::RGBColor(1.f, 0.0f, 0.0f));
 	Scenegraph::GetInstance()->AddObjectToGraph(new Plane(Elite::FPoint3(0, 0.f, -7), Elite::FVector3(0.f, 0.f, 1.f), matPlane));
+	matPlane = new Material_Lambert(0.9f, Elite::RGBColor(0.0f, 1.0f, 0.0f));
 	Scenegraph::GetInstance()->AddObjectToGraph(new Plane(Elite::FPoint3(0.f, 0.f, 0.f), Elite::FVector3(0.f, 1.f, 0.f), matPlane));
+	matPlane = new Material_Lambert(0.9f, Elite::RGBColor(0.0f, 0.0f, 1.0f));
 	Scenegraph::GetInstance()->AddObjectToGraph(new Plane(Elite::FPoint3(-5.f, 0.f, 0.f), Elite::FVector3(1.f, 0.f, 0.f), matPlane));
+	matPlane = new Material_Lambert(0.9f, Elite::RGBColor(1.0f, 1.0f, 0.0f));
 	Scenegraph::GetInstance()->AddObjectToGraph(new Plane(Elite::FPoint3(5.f, 0.f, 0.f), Elite::FVector3(-1.f, 0.f, 0.f), matPlane));
 	if (!renderBunny)
 	{
@@ -102,7 +105,7 @@ int main(int argc, char* args[])
 		materialRefractive->SetCurrShape(sphere);
 		allShapes.push_back(sphere);
 		Scenegraph::GetInstance()->AddObjectToGraph(sphere);
-		sphere = new Sphere(Elite::FPoint3(0.0f, 1.5f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.7f)));
+		sphere = new Sphere(Elite::FPoint3(-2.5f, 1.5f, -3.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.7f)));
 		allShapes.push_back(sphere);
 		Scenegraph::GetInstance()->AddObjectToGraph(sphere);
 		//Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(2.5f, 1.5f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.1f))));
@@ -115,8 +118,8 @@ int main(int argc, char* args[])
 
 	//---------Initialize all the Lights-------
 	//LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0,5.0f,-4.0f }, Elite::RGBColor{ 1.f,1.f,1.f }, 80.0f, Light::LightType::pointLight));
-	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0,2.5f,4.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 80.0f, Light::LightType::pointLight));
-	//LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ -4,10,6.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 1.5f, Light::LightType::directionalLight));
+	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ -2,1.5f,5.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 80.0f, Light::LightType::pointLight));
+	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ -4,10,6.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 1.5f, Light::LightType::directionalLight));
 	//-----------------------------------------
 	while (isLooping)
 	{
@@ -191,9 +194,11 @@ int main(int argc, char* args[])
 				{
 				case SDLK_j:
 					directionLightSwitch = !directionLightSwitch;
+					Material::m_IndexOfRef = 1.4;
 					break;
 				case SDLK_k:
 					pointLight1Switch = !pointLight1Switch;
+					Material::m_IndexOfRef = 0.75;
 					break;
 				case SDLK_l:
 					pointLight2Switch = !pointLight2Switch;
@@ -228,19 +233,19 @@ int main(int argc, char* args[])
 
 		if (pStates[SDL_SCANCODE_W])
 		{
-			camera.ForwardTranslation(deltaTime * -movementSpeed);
+			//camera.ForwardTranslation(deltaTime * -movementSpeed);
 		}
 		else if (pStates[SDL_SCANCODE_S])
 		{
-			camera.ForwardTranslation(deltaTime * movementSpeed);
+			//camera.ForwardTranslation(deltaTime * movementSpeed);
 		}
 		if (pStates[SDL_SCANCODE_A])
 		{
-			camera.RightTranslation(deltaTime * -movementSpeed);
+			//camera.RightTranslation(deltaTime * -movementSpeed);
 		}
 		else if (pStates[SDL_SCANCODE_D])
 		{
-			camera.RightTranslation(deltaTime * movementSpeed);
+			//camera.RightTranslation(deltaTime * movementSpeed);
 		}
 
 		//--------- Render ---------

@@ -44,7 +44,7 @@ void Elite::Renderer::Render(Camera& camera)
 			HitRecord hitRecord;
 			HitObjects(m_Ray, hitRecord);
 
-			Elite::RGBColor finalColor{ 0 ,0,0 };
+			Elite::RGBColor finalColor{ 0,0,0 };
 			//
 			if (hitRecord.IshitObject)
 			{
@@ -87,7 +87,7 @@ void Elite::Renderer::Render(Camera& camera)
 							Elite::FVector3 v = Elite::GetNormalized(Elite::FVector3(camera.GetPosition() - Elite::FVector3(hitPointWithOffset)));
 							//
 							bool isShade = false;
-							auto shade = hitRecord.pMaterial->Shade(hitRecord, direction, v, isShade);
+							auto shade = hitRecord.pMaterial->Shade(hitRecord, direction, v, isShade, m_Ray.GetDirection());
 							if (isShade)
 							{
 								finalColor = shade;

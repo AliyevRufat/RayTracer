@@ -6,13 +6,15 @@
 #include "LightManager.h"
 #include "ERenderer.h"
 
+double Material::m_IndexOfRef = 2.4;
+
 Material_Lambert::Material_Lambert(float diffuseReflectance, const  Elite::RGBColor& diffuseColor)
 {
 	m_DiffuseColor = { diffuseColor };
 	m_DiffuseReflectance = { diffuseReflectance };
 }
 
-Elite::RGBColor Material_Lambert::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const
+Elite::RGBColor Material_Lambert::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade,const Elite::FVector3& incidentRay) const
 {
 	return BRDF::Lambert(m_DiffuseReflectance, m_DiffuseColor);
 }
@@ -25,7 +27,7 @@ Material_LambertPhong::Material_LambertPhong(float diffuseReflectance, const Eli
 	m_DiffuseReflectance = diffuseReflectance;
 }
 
-Elite::RGBColor Material_LambertPhong::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const
+Elite::RGBColor Material_LambertPhong::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade, const Elite::FVector3& incidentRay) const
 {
 	return BRDF::Lambert(m_DiffuseReflectance, m_DiffuseColor) +
 		BRDF::Phong(m_SpecularReflectance, m_PhongExponent, l, v, hitRecord.normal);
@@ -41,7 +43,7 @@ Material_CookTorrance::Material_CookTorrance(float diffuseReflectance, const Eli
 	m_DiffuseReflectance = diffuseReflectance;
 }
 
-Elite::RGBColor Material_CookTorrance::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const
+Elite::RGBColor Material_CookTorrance::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade, const Elite::FVector3& incidentRay) const
 {
 	Elite::FVector3 halfVector = (v + l) / (Elite::Magnitude(v + l));
 	Elite::RGBColor F = m_F0 + (Elite::RGBColor(1, 1, 1) - m_F0) * (pow(1 - (Elite::Dot(halfVector, v)), 5));
@@ -56,20 +58,20 @@ Material_Refractive::Material_Refractive(const Elite::RGBColor& diffuseColor)
 	m_DiffuseColor = diffuseColor;
 }
 
-Elite::RGBColor Material_Refractive::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade) const
+Elite::RGBColor Material_Refractive::Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade, const Elite::FVector3& incidentRay) const
 {
 	Elite::RGBColor trnColor = {0,0,0};
-	double indexOfRef = 1;
+	
 	//
-	Elite::FVector3 p = l;
-	p = Elite::GetNormalized(p);
+	Elite::FVector3 p = incidentRay;
+	//p = Elite::GetNormalized(p);
 	auto tempNormal = hitRecord.normal;
-	double r = 1.0 / indexOfRef;
+	double r = 1.0 / m_IndexOfRef;
 	double c = Elite::Dot(tempNormal, p);
 
 	if (c < 0.0)
 	{
-		tempNormal = tempNormal * -1.0;
+		//tempNormal = tempNormal * -1.0;
 		c = -Elite::Dot(tempNormal, p);
 	}
 
@@ -96,10 +98,10 @@ Elite::RGBColor Material_Refractive::Shade(const HitRecord& hitRecord, const Eli
 		p2 = Elite::GetNormalized(p2);
 		auto tempNormal2 = newHitRecord.normal;
 		double r2 = 1.0;
-		double c2 = -Elite::Dot(tempNormal2, p2);
+		double c2 = Elite::Dot(tempNormal2, p2);
 		if (c2 < 0.0)
 		{
-			tempNormal2 = tempNormal2 * -1.0;
+			//tempNormal2 = tempNormal2 * -1.0;
 			c2 = -Elite::Dot(tempNormal2, p2);
 		}
 		Elite::FVector3 refractedVector2 = r2 * p2 + (r2 * c2 - sqrtf(1.0 - pow(r2, 2.0) * (1.0 - pow(c2, 2.0)))) * tempNormal2;
@@ -162,9 +164,13 @@ Elite::RGBColor Material_Refractive::Shade(const HitRecord& hitRecord, const Eli
 						// calculate v for shade
 						Elite::FVector3 v = Elite::GetNormalized(Elite::FVector3(Elite::Renderer::m_Camera->GetPosition() - Elite::FVector3(hitPointWithOffset)));
 						bool temp = false;
-						matColor += Ergb * closestHitRecord.pMaterial->Shade(closestHitRecord, direction, v, temp) * dotProduct;
+						matColor += Ergb * closestHitRecord.pMaterial->Shade(closestHitRecord, direction, v, temp, incidentRay) * dotProduct;
 						matColor.MaxToOne();
 					}
+				}
+				else
+				{
+					matColor = { 0,0,0 };
 				}
 			}
 		}

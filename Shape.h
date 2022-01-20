@@ -39,6 +39,7 @@ public:
 	ShapeType GetShapeType() const { return m_ShapeType; };
 
 	Material* GetMaterial() const { return m_pMaterial; };
+	//bool m_IsRefractive = false;
 protected:
 	Material* m_pMaterial = nullptr;
 	ShapeType m_ShapeType;
