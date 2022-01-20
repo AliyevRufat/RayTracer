@@ -36,7 +36,6 @@ namespace Elite
 		bool SaveBackbufferToImage() const;
 		//toggle
 		void SetSwitchBools(bool dirLight, bool pointLight1, bool pointLight2, bool irrad, bool shadows, bool BRDF);
-		//
 		static Camera* m_Camera;
 	private:
 		SDL_Window* m_pWindow = nullptr;

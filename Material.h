@@ -16,16 +16,12 @@ public:
 	virtual Elite::RGBColor Shade(const HitRecord& hitRecord, const Elite::FVector3& l, const Elite::FVector3& v, bool& isShade, const Elite::FVector3& incidentRay) const = 0;
 	virtual void SetAllShapes(std::vector<Shape*> pAllShapes) {};
 	virtual void SetCurrShape(Shape* pShape) {};
-	bool CastRay(const Ray& castRay, std::vector<Shape*> objectList,
-		Shape* thisObject,
-		Shape*& closestObject,
-		HitRecord& hitRecord) const;
-
+	bool HitObjects(const Ray& castRay, Shape* thisObject, Shape*& closestObject, HitRecord& hitRecord) const;
+	//Datamembers
 	Elite::RGBColor m_DiffuseColor{ 0,0,0 };
 	float m_DiffuseReflectance{ 0 };
 	Shape* m_pShape;
-	std::vector<Shape*> m_pAllShapes;
-	static double m_IndexOfRef;
+	double m_IndexOfRef = 1;
 };
 
 class Material_Lambert final : public Material
@@ -79,7 +75,6 @@ class Material_Refractive final : public Material
 {
 public:
 	Material_Refractive(const Elite::RGBColor& diffuseColor);
-	void SetAllShapes(std::vector<Shape*> pAllShapes) override { m_pAllShapes = pAllShapes; };
 	void SetCurrShape(Shape* pShape) override { m_pShape = pShape; };
 	~Material_Refractive() = default;
 	Material_Refractive(const Material_Refractive&) = delete;

@@ -100,7 +100,7 @@ int main(int argc, char* args[])
 		//Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(-2.5f, 4.0f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 1.0f))));
 		//Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(0.0f, 4.0f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 0.4f))));
 		//Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(2.5f, 4.0f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 0.1f))));
-		auto materialRefractive = materialManager.AddMaterial(new Material_Refractive(Elite::RGBColor(1.0f,0.5f,0.5f)));
+		auto materialRefractive = materialManager.AddMaterial(new Material_Refractive(Elite::RGBColor(1.0f,0.0f,0.0f)));
 		auto sphere = new Sphere(Elite::FPoint3(-2.5f, 1.5f, 0.0f), 1.0f, materialRefractive);
 		materialRefractive->SetCurrShape(sphere);
 		allShapes.push_back(sphere);
@@ -194,11 +194,9 @@ int main(int argc, char* args[])
 				{
 				case SDLK_j:
 					directionLightSwitch = !directionLightSwitch;
-					Material::m_IndexOfRef = 1.4;
 					break;
 				case SDLK_k:
 					pointLight1Switch = !pointLight1Switch;
-					Material::m_IndexOfRef = 0.75;
 					break;
 				case SDLK_l:
 					pointLight2Switch = !pointLight2Switch;
@@ -250,6 +248,7 @@ int main(int argc, char* args[])
 
 		//--------- Render ---------
 		pRenderer->Render(camera);// , triangleMesh, renderBunny);
+		//Material::m_IndexOfRef += 0.05f;
 		//switchting the lights and brdfs etc
 		pRenderer->SetSwitchBools(directionLightSwitch, pointLight1Switch, pointLight2Switch, irradianceSwitch, shadowsSwitch, BRDFSwitch);
 

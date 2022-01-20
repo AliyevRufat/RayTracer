@@ -57,22 +57,19 @@ void Elite::Renderer::Render(Camera& camera)
 
 					bool isPointVisible = true;
 					//checking for shadows
-					if (m_ShadowsSwitch)
-					{
-						HitRecord tempHitRecord{};
-						tempHitRecord.isLightRay = true;
-						Ray lightRay;
-						lightRay.SetTMin(0.001f);
-						lightRay.SetTMax(lengthDirection);
-						lightRay.SetOrigin(hitPointWithOffset);
-						lightRay.SetDirection(direction);
+					HitRecord tempHitRecord{};
+					tempHitRecord.isLightRay = true;
+					Ray lightRay;
+					lightRay.SetTMin(0.001f);
+					lightRay.SetTMax(lengthDirection);
+					lightRay.SetOrigin(hitPointWithOffset);
+					lightRay.SetDirection(direction);
 
-						for (Shape* pShape : Scenegraph::GetInstance()->GetShapes())
+					for (Shape* pShape : Scenegraph::GetInstance()->GetShapes())
+					{
+						if (pShape->Hit(lightRay, tempHitRecord))
 						{
-							if (pShape->Hit(lightRay, tempHitRecord))
-							{
-								isPointVisible = false;
-							}
+							isPointVisible = false;
 						}
 					}
 					Elite::RGBColor Ergb;
@@ -86,9 +83,9 @@ void Elite::Renderer::Render(Camera& camera)
 							// calculate v for shade
 							Elite::FVector3 v = Elite::GetNormalized(Elite::FVector3(camera.GetPosition() - Elite::FVector3(hitPointWithOffset)));
 							//
-							bool isShade = false;
-							auto shade = hitRecord.pMaterial->Shade(hitRecord, direction, v, isShade, m_Ray.GetDirection());
-							if (isShade)
+							bool isRefractive = false;
+							auto shade = hitRecord.pMaterial->Shade(hitRecord, direction, v, isRefractive, m_Ray.GetDirection());
+							if (isRefractive)
 							{
 								finalColor = shade;
 							}

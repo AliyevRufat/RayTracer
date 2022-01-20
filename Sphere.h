@@ -14,7 +14,7 @@ public:
 	Sphere& operator=(Sphere&&) noexcept = delete;
 
 	bool Hit(const Ray& ray, HitRecord& hitRecord) const override;
-	bool TestIntersection(const Ray& ray, HitRecord& hitRecord) const override;
+	bool HitRefractive(const Ray& ray, HitRecord& hitRecord) const override;
 private:
 	Elite::FPoint3 m_Origin;
 	float m_Radius;
