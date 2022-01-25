@@ -62,7 +62,6 @@ Elite::RGBColor Material_Refractive::Shade(const HitRecord& hitRecord, const Eli
 	
 	//get the rafracted vector
 	Elite::FVector3 refractedVector = GetRefractedRay(hitRecord,incidentRay);
-
 	//the refracted ray
 	Ray refractedRay(hitRecord.hitPoint + (refractedVector * 0.01), hitRecord.hitPoint + refractedVector);
 
@@ -154,16 +153,16 @@ Elite::RGBColor Material_Refractive::Shade(const HitRecord& hitRecord, const Eli
 
 Elite::FVector3 Material_Refractive::GetRefractedRay(const HitRecord& hitRecord, const Elite::FVector3& incidentRay) const
 {
-	Elite::FVector3 p = incidentRay;
-	auto tempNormal = hitRecord.normal;
+	auto normal = hitRecord.normal;
 	double r = 1.0 / m_IndexOfRef;
-	double c = Elite::Dot(tempNormal, p);
+	double c = Elite::Dot(normal, incidentRay);
 
 	if (c < 0.0)
 	{
-		c = -Elite::Dot(tempNormal, p);
+		c = -Elite::Dot(normal, incidentRay);
 	}
-	return r * p + (r * c - sqrtf(1.0 - pow(r, 2.0) * (1.0 - pow(c, 2.0)))) * tempNormal;
+	auto refractedVector = r * incidentRay + (r * c - sqrtf(1.0 - pow(r, 2.0) * (1.0 - pow(c, 2.0)))) * normal;
+	return refractedVector;
 }
 
 Material_Reflective::Material_Reflective(const Elite::RGBColor& diffuseColor)
