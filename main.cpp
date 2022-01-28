@@ -46,7 +46,8 @@ int main(int argc, char* args[])
 	Elite::Renderer* pRenderer = new Elite::Renderer(pWindow);
 	//---------------------------------------------------------------------------------------
 	//init Cam and MatManager
-	Camera camera = Elite::FVector3{ 0.f,3.5f,10.f };
+	Camera camera = Elite::FVector3{ 0.f,5.0f,14.0f };
+	camera.Pitch(-20.0f);
 	MaterialManager materialManager;
 	//vars
 	float deltaTime{ 0.f };
@@ -70,44 +71,41 @@ int main(int argc, char* args[])
 	float printTimer = 0.f;
 	bool isLooping = true;
 	bool takeScreenshot = false;
-	//-------------------------------------------Switch this bool to change the scene from normal to bunny-----------------------------------------------------
-	bool renderBunny = true;
-
-	Material* triangleMeshMat = new Material_Lambert(0.9f, Elite::RGBColor(1.0f, 1.f, 0.8f));
-	TriangleMesh* triangleMesh = new TriangleMesh("lowpoly_bunny.obj", triangleMeshMat);
-	Material* triangleMat = new Material_Lambert(0.9f, Elite::RGBColor(1.0f, 1.f, 0.8f));
-
-	if (renderBunny)
-	{
-		//---------Initialize Triangle Mesh-------
-		triangleMesh->ReadObjFile();
-		Scenegraph::GetInstance()->AddObjectToGraph(triangleMesh);
-	}
-	//---------Initialize all the Shapes-------
-	//planes
-	Material* matPlane = new Material_Lambert(0.9f, Elite::RGBColor(1.f, 0.85f, 0.75f));
-	Scenegraph::GetInstance()->AddObjectToGraph(new Plane(Elite::FPoint3(0, 0.f, -7), Elite::FVector3(0.f, 0.f, 1.f), matPlane));
+	//------------------------------------------OBJECTS--------------------------------------
+	//plane
+	Material* matPlane = new Material_Lambert(0.9f, Elite::RGBColor(0.7f, 0.7f, 0.7f));
+	//Material* matPlane = new Material_Reflective(Elite::RGBColor(1.f,1.f,1.f));
 	Scenegraph::GetInstance()->AddObjectToGraph(new Plane(Elite::FPoint3(0.f, 0.f, 0.f), Elite::FVector3(0.f, 1.f, 0.f), matPlane));
-	Scenegraph::GetInstance()->AddObjectToGraph(new Plane(Elite::FPoint3(-5.f, 0.f, 0.f), Elite::FVector3(1.f, 0.f, 0.f), matPlane));
-	Scenegraph::GetInstance()->AddObjectToGraph(new Plane(Elite::FPoint3(5.f, 0.f, 0.f), Elite::FVector3(-1.f, 0.f, 0.f), matPlane));
-	if (!renderBunny)
-	{
-		//////////spheres
-		Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(-2.5f, 4.0f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 1.0f))));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(0.0f, 4.0f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 0.4f))));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(2.5f, 4.0f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 0.1f))));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(-2.5f, 1.5f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 1.0f))));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(0.0f, 1.5f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.7f))));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(2.5f, 1.5f, 0.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.1f))));
-		//triangles
-		Scenegraph::GetInstance()->AddObjectToGraph(new Triangle(Elite::FPoint3(-0.75f, 7.5f, 0.0f), Elite::FPoint3(-0.75f, 6.0f, 0.0f), Elite::FPoint3(0.75f, 6.0f, 0.0f), triangleMat, Triangle::Cullmode::backCulling));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Triangle(Elite::FPoint3(1.75f, 7.5f, 0.0f), Elite::FPoint3(1.75f, 6.0f, 0.0f), Elite::FPoint3(3.25f, 6.0f, 0.0f), triangleMat, Triangle::Cullmode::frontCulling));
-		Scenegraph::GetInstance()->AddObjectToGraph(new Triangle(Elite::FPoint3(-3.25f, 7.5f, 0.0f), Elite::FPoint3(-3.25f, 6.0f, 0.0f), Elite::FPoint3(-1.75f, 6.0f, 0.0f), triangleMat, Triangle::Cullmode::noCulling));
-	}
+	//spheres
+	//Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(2.5f, 1.0f, 4.0f), 2.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), false, Elite::RGBColor(0.f, 0.f, 0.f), 0.1f))));
+	Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(-2.5f, 1.0f, -3.0f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0.7,0,0.7), true, Elite::RGBColor(0.910f, 0.778f, 0.423f), 0.7f))));
+	Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(4.0f, 1.0f, -1.5f), 1.0f, materialManager.AddMaterial(new Material_CookTorrance(1.0f, Elite::RGBColor(0,0,1), false, Elite::RGBColor(0, 0, 0), 1.0f))));
+	Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(0.0f, 0.5f, 0.f), 0.5f, materialManager.AddMaterial(new Material_CookTorrance(0.4f, Elite::RGBColor(1,1,0), false, Elite::RGBColor(0,0,0), 0.4f))));
+	Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(4.0f, 3.0f, 0.0f), 3.0f, materialManager.AddMaterial(new Material_Reflective(Elite::RGBColor(0.0f, 0.0f, 0.0f)))));
+	Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(1.0f, 1.0f, 3.0f), 1.0f, materialManager.AddMaterial(new Material_Lambert(1.0f, Elite::RGBColor(0.65,0.25,0.25)))));
+	Scenegraph::GetInstance()->AddObjectToGraph(new Sphere(Elite::FPoint3(-2.0f, 1.0f, 2.0f), 1.0f, materialManager.AddMaterial(new Material_LambertPhong(1.0f, Elite::RGBColor(0.6f, 0.6f, 0.6f), 0.8f, 20))));
+	//transparent
+	auto materialRefractive = materialManager.AddMaterial(new Material_Refractive(Elite::RGBColor(0.2f,0.2f,0.2f)));
+	materialRefractive->SetIndexOfRefraction(3.4);
+	auto sphere = new Sphere(Elite::FPoint3(-2.5f, 1.0f, 5.0f), 1.0f, materialRefractive);
+	materialRefractive->SetCurrShape(sphere);
+	Scenegraph::GetInstance()->AddObjectToGraph(sphere);
+	//
+	materialRefractive = materialManager.AddMaterial(new Material_Refractive(Elite::RGBColor(0.6f, 0.6f, 0.6f)));
+	materialRefractive->SetIndexOfRefraction(1.0);
+	sphere = new Sphere(Elite::FPoint3(4.0f, 1.0f, 4.0f), 1.0f, materialRefractive);
+	materialRefractive->SetCurrShape(sphere);
+	Scenegraph::GetInstance()->AddObjectToGraph(sphere);
+	//
+	materialRefractive = materialManager.AddMaterial(new Material_Refractive(Elite::RGBColor(0.7,0.3,0.3)));
+	materialRefractive->SetIndexOfRefraction(2.5);
+	sphere = new Sphere(Elite::FPoint3(-0.5f, 1.0f, 5.0f), 1.0f, materialRefractive);
+	materialRefractive->SetCurrShape(sphere);
+	Scenegraph::GetInstance()->AddObjectToGraph(sphere);
 
 	//---------Initialize all the Lights-------
-	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0,5.0f,-4.0f }, Elite::RGBColor{ 1.f,1.f,1.f }, 20.0f, Light::LightType::pointLight));
-	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0,2.5f,4.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 20.0f, Light::LightType::pointLight));
+	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0, 1.f, -5.0f }, Elite::RGBColor{ 1.f,1.f,1.f }, 20.0f, Light::LightType::pointLight));
+	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ 0, 1.f, 8.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 10.0f, Light::LightType::pointLight));
 	LightManager::GetInstance()->AddLight(new Light(Elite::FVector3{ -4,10,6.f }, Elite::RGBColor{ 1.f,1.f,1.f }, 1.5f, Light::LightType::directionalLight));
 	//-----------------------------------------
 	while (isLooping)
@@ -220,23 +218,24 @@ int main(int argc, char* args[])
 
 		if (pStates[SDL_SCANCODE_W])
 		{
-			camera.ForwardTranslation(deltaTime * -movementSpeed);
+			//camera.ForwardTranslation(deltaTime * -movementSpeed);
 		}
 		else if (pStates[SDL_SCANCODE_S])
 		{
-			camera.ForwardTranslation(deltaTime * movementSpeed);
+			//camera.ForwardTranslation(deltaTime * movementSpeed);
 		}
 		if (pStates[SDL_SCANCODE_A])
 		{
-			camera.RightTranslation(deltaTime * -movementSpeed);
+			//camera.RightTranslation(deltaTime * -movementSpeed);
 		}
 		else if (pStates[SDL_SCANCODE_D])
 		{
-			camera.RightTranslation(deltaTime * movementSpeed);
+			//camera.RightTranslation(deltaTime * movementSpeed);
 		}
 
 		//--------- Render ---------
 		pRenderer->Render(camera);// , triangleMesh, renderBunny);
+		//Material::m_IndexOfRef += 0.05f;
 		//switchting the lights and brdfs etc
 		pRenderer->SetSwitchBools(directionLightSwitch, pointLight1Switch, pointLight2Switch, irradianceSwitch, shadowsSwitch, BRDFSwitch);
 
@@ -265,11 +264,11 @@ int main(int argc, char* args[])
 	delete pRenderer;
 	delete pTimer;
 	delete matPlane;
-	delete triangleMat;
-	delete triangleMeshMat;
+	//delete triangleMat;
+	//delete triangleMeshMat;
 	Scenegraph::GetInstance()->ResetInstance();
 	LightManager::GetInstance()->ResetInstance();
-	delete triangleMesh;
+	//delete triangleMesh;
 
 	ShutDown(pWindow);
 	return 0;

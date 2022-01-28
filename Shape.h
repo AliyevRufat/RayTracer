@@ -35,8 +35,10 @@ public:
 	virtual void Update(float deltaT) {};
 
 	virtual bool Hit(const Ray& ray, HitRecord& hitRecord) const = 0;
-
+	virtual bool HitRefractive(const Ray& ray, HitRecord& hitRecord) const { return false; };
 	ShapeType GetShapeType() const { return m_ShapeType; };
+
+	Material* GetMaterial() const { return m_pMaterial; };
 protected:
 	Material* m_pMaterial = nullptr;
 	ShapeType m_ShapeType;

@@ -10,6 +10,8 @@
 #include "LightManager.h"
 #include <iostream>
 
+Camera* Elite::Renderer::m_Camera{ };
+
 Elite::Renderer::Renderer(SDL_Window* pWindow)
 {
 	//Initialize
@@ -28,20 +30,21 @@ void Elite::Renderer::Render(Camera& camera)
 {
 	SDL_LockSurface(m_pBackBuffer);
 	//
+	m_Camera = &camera;
+	//
 	Elite::FMatrix4 lookAtMatrix = camera.GetLookAtMatrix();
 	//Loop over all the pixels
 	for (uint32_t r = 0; r < m_Height; ++r)
 	{
 		for (uint32_t c = 0; c < m_Width; ++c)
 		{
-			FPoint3 sample = Elite::FPoint3(lookAtMatrix * m_Ray.ScreenToWorld(r, c, camera.GetFOV()));
+			FPoint3 sample = Elite::FPoint3(lookAtMatrix * m_Ray.ScreenToWorld(r,c,camera.GetFOV()));
 			m_Ray.SetDirection(Elite::GetNormalized(sample - camera.GetPosition()));
 			m_Ray.SetOrigin(camera.GetPosition());
-
 			HitRecord hitRecord;
 			HitObjects(m_Ray, hitRecord);
 
-			Elite::RGBColor finalColor{ 0 ,0,0 };
+			Elite::RGBColor finalColor{ 0,0,0 };
 			//
 			if (hitRecord.IshitObject)
 			{
@@ -54,22 +57,19 @@ void Elite::Renderer::Render(Camera& camera)
 
 					bool isPointVisible = true;
 					//checking for shadows
-					if (m_ShadowsSwitch)
-					{
-						HitRecord tempHitRecord{};
-						tempHitRecord.isLightRay = true;
-						Ray lightRay;
-						lightRay.SetTMin(0.001f);
-						lightRay.SetTMax(lengthDirection);
-						lightRay.SetOrigin(hitPointWithOffset);
-						lightRay.SetDirection(direction);
+					HitRecord tempHitRecord{};
+					tempHitRecord.isLightRay = true;
+					Ray lightRay;
+					lightRay.SetTMin(0.001f);
+					lightRay.SetTMax(lengthDirection);
+					lightRay.SetOrigin(hitPointWithOffset);
+					lightRay.SetDirection(direction);
 
-						for (Shape* pShape : Scenegraph::GetInstance()->GetShapes())
+					for (Shape* pShape : Scenegraph::GetInstance()->GetShapes())
+					{
+						if (pShape->Hit(lightRay, tempHitRecord))
 						{
-							if (pShape->Hit(lightRay, tempHitRecord))
-							{
-								isPointVisible = false;
-							}
+							isPointVisible = false;
 						}
 					}
 					Elite::RGBColor Ergb;
@@ -78,33 +78,22 @@ void Elite::Renderer::Render(Camera& camera)
 						float dotProduct = Dot(hitRecord.normal, direction);
 						if (dotProduct >= 0)
 						{
-							//if the lights are switched on
-							if (pLight == LightManager::GetInstance()->GetLights()[0] && m_PointLight1Switch || pLight == LightManager::GetInstance()->GetLights()[1] && m_PointLight2Switch || pLight == LightManager::GetInstance()->GetLights()[2] && m_DirLightSwitch)
-							{
-								Ergb = pLight->GetIrradiance(hitRecord);
-							}
-							else
-							{
-								Ergb = Elite::RGBColor(0, 0, 0);
-							}
+							//light contribution
+							Ergb = pLight->GetIrradiance(hitRecord);
 							// calculate v for shade
 							Elite::FVector3 v = Elite::GetNormalized(Elite::FVector3(camera.GetPosition() - Elite::FVector3(hitPointWithOffset)));
-
-							//the 3 different scenarios of pressing T
-							if (m_BRDFSwitch && m_IrradianceSwitch)
+							//
+							bool isRefractive = false;
+							auto shade = hitRecord.pMaterial->Shade(hitRecord, direction, v, isRefractive, m_Ray.GetDirection());
+							if (isRefractive)
 							{
-								finalColor += Ergb * hitRecord.pMaterial->Shade(hitRecord, direction, v) * dotProduct;
+								finalColor = shade;
 							}
-							else if (m_BRDFSwitch && !m_IrradianceSwitch)
+							else 
 							{
-								m_ShadowsSwitch = false;
-								finalColor += hitRecord.pMaterial->Shade(hitRecord, direction, v) * dotProduct;
+								finalColor += Ergb * shade * dotProduct;
+								finalColor.MaxToOne();
 							}
-							else if (!m_BRDFSwitch && m_IrradianceSwitch)
-							{
-								finalColor += Ergb * dotProduct;
-							}
-							finalColor.MaxToOne();
 						}
 					}
 				}
@@ -143,6 +132,7 @@ void Elite::Renderer::HitObjects(const Ray& ray, HitRecord& hitRecord) const
 		}
 	}
 }
+
 void Elite::Renderer::SetSwitchBools(bool dirLight, bool pointLight1, bool pointLight2, bool irrad, bool shadows, bool BRDF)
 {
 	m_DirLightSwitch = dirLight;

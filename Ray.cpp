@@ -1,9 +1,17 @@
 #include "Ray.h"
 #include <iostream>
+#include "Camera.h"
 
 Ray::Ray()
 	:Ray{ 0,0 }
 {
+}
+
+Ray::Ray(Elite::FPoint3 p1, Elite::FPoint3 p2)
+	: m_Oray(p1)
+	, m_P2{p2}
+{
+	m_Direction = m_P2 - m_Oray;
 }
 
 Ray::Ray(uint32_t width, uint32_t height)
@@ -17,7 +25,7 @@ Ray::Ray(uint32_t width, uint32_t height)
 Elite::FPoint4 Ray::ScreenToWorld(uint32_t r, uint32_t c, float fov) const
 {
 	Elite::FPoint4 pos{};
-
+	
 	pos.x = float((2 * ((c + .5) / m_Width) - 1)) * (float(m_Width) / float(m_Height)) * fov;
 	pos.y = float((1 - 2 * ((r + .5) / m_Height))) * fov;
 	pos.z = -1.f;
@@ -28,6 +36,7 @@ Elite::FPoint4 Ray::ScreenToWorld(uint32_t r, uint32_t c, float fov) const
 
 Elite::FVector3 Ray::GetDirection() const
 {
+	//m_Direction = Elite::GetNormalized(m_P2 - m_Oray);
 	return m_Direction;
 }
 
